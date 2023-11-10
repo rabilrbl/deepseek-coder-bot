@@ -1,0 +1,3 @@
+[submodule "deepseek-coder-api"]
+	path = deepseek-coder-api
+	url = https://github.com/rabilrbl/deepseek-coder-api.git
