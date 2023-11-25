@@ -254,14 +254,12 @@ async def send_message(client: Client, message: Message):
     try:
         # Send initial message and store the chat id
         chat_info = await message.reply_text("Sending message to Deepseek Coder...")
-        # edit message timer to send message every 500ms
-        timer = time.time()
-        # stream messages by iterating over the chunks and editing the message
-        for chunk in chat.chat(message.text, user_credentials[message.from_user.id]["user"]["token"]):
+        # Stream messages by iterating over the chunks and editing the message
+        async for chunk in chat.chat(message.text, user_credentials[message.from_user.id]["user"]["token"]):
             chunk = chunk.strip().decode("utf-8").replace("data: ", "")
             json_chunk = json.loads(chunk)
             try:
-                # keep printing in one line
+                # Keep printing in one line
                 chat_info = await chat_info.edit(chat_info.text + json_chunk["choices"][0]["delta"]["content"], disable_web_page_preview=True)
             except KeyError:
                 pass
@@ -270,7 +268,5 @@ async def send_message(client: Client, message: Message):
     except Exception as e:
         await message.reply_text(f"Error: {e}")
         return
-    # Send success message
-    await message.reply_text(f"Successfully sent message to Deepseek Coder")
 
 app.run()
