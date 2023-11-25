@@ -3,8 +3,8 @@ import os
 import random
 import time
 
-import uvloop
-from pyrogram import Client, filters
+# import uvloop
+from pyrogram import Client, filters, errors
 from pyrogram.types import Message
 
 from pyrogram import enums
@@ -12,11 +12,13 @@ from pyrogram import enums
 from deepseek_coder_api import login, register, newchat, chat
 
 
-uvloop.install()
+# uvloop.install()
 
 app = Client(
     "Deepseek Coder Bot",
     bot_token=os.environ.get("BOT_TOKEN"),
+    api_hash=os.environ.get("API_HASH"),
+    api_id=os.environ.get("API_ID"),
 )
 
 user_credentials = {}
@@ -262,6 +264,8 @@ async def send_message(client: Client, message: Message):
                 # keep printing in one line
                 chat_info = await chat_info.edit(chat_info.text + json_chunk["choices"][0]["delta"]["content"], disable_web_page_preview=True)
             except KeyError:
+                pass
+            except errors.MessageNotModified:
                 pass
     except Exception as e:
         await message.reply_text(f"Error: {e}")
